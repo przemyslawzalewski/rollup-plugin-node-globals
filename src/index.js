@@ -1,5 +1,5 @@
 import inject from './inject/index';
-import { join, relative, dirname } from 'path';
+import { join, resolve, dirname } from 'path';
 import {randomBytes} from 'crypto';
 import {createFilter} from 'rollup-pluginutils';
 
@@ -91,14 +91,14 @@ export default function nodeGlobals(options) {
       }
     },
     resolveId(importee, importer) {
-      if (importee === DIRNAME) {
-        let id = randomBytes(15).toString('hex');
-        dirs.set(id, dirname('/' + relative(basedir, importer)));
-        return id;
-      }
-      if (importee === FILENAME) {
-        let id = randomBytes(15).toString('hex');
-        dirs.set(id, '/' + relative(basedir, importer));
+      const fromDirectoryName = importee === DIRNAME;
+      const fromFileName = importee === FILENAME;
+
+      if (fromDirectoryName || fromFileName) {
+        const id = randomBytes(15).toString('hex');
+        const relativePath = resolve(basedir, importer);
+        const resolved = fromDirectoryName ? dirname(relativePath) : relativePath;
+        dirs.set(id, resolved);
         return id;
       }
     },
