@@ -255,7 +255,9 @@ function nodeGlobals(options) {
   return {
     load: function load(id) {
       if (dirs.has(id)) {
-        return 'export default \'' + dirs.get(id) + '\'';
+        var path = dirs.get(id);
+        var sanitized = JSON.stringify(path);
+        return 'export default ' + sanitized;
       }
     },
     resolveId: function resolveId(importee, importer) {
