@@ -87,7 +87,9 @@ export default function nodeGlobals(options) {
   return {
     load(id) {
       if (dirs.has(id)) {
-        return `export default '${dirs.get(id)}'`;
+        const path = dirs.get(id);
+        const sanitized = JSON.stringify(path);
+        return `export default ${sanitized}`;
       }
     },
     resolveId(importee, importer) {
